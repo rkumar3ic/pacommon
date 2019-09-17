@@ -1,0 +1,12 @@
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\AudiTrailApplication.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\service\impl\AuditTrailServiceImpl.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\util\AuditConfiguration.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\constant\AuditConstant.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\dao\impl\AuditTrailDAOImpl.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\queue\impl\QueuePublisherImpl.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\model\AuditEvent.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\queue\AuditAzureQueuePublisher.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\queue\QueuePublisher.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\dao\AuditTrailDAO.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\service\AuditTrailService.java
+C:\FishBowl\PA\sorceCodePA\auditTrail\auditTrail\src\main\java\com\fishbowl\auditTrail\model\AuditTrail.java
