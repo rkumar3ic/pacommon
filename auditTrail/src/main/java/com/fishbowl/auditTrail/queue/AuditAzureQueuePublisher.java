@@ -16,12 +16,10 @@ public class AuditAzureQueuePublisher {
 		try{
 			QueuePublisher queuePublisher = new QueuePublisherImpl();
 			String queueName = AuditConstant.AUDIT_QUEUE+event.getBrandId();
-			logger.info("---- queueName ---- " + queueName);
 			logger.info("queueName : " + queueName);
 			Gson gson = new Gson();
 			String json = gson.toJson(event);
 			logger.info("json : " + json);
-			logger.info("----- json -----  " + json);
 			String queueURL = queuePublisher.createQueue(queueName);
 			logger.info("queueURL : " + queueURL);
 			queuePublisher.sendEventToQueue(json);

@@ -23,15 +23,6 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail,Objec
 	     this.auditTrail = new AuditTrail();
 	  }
 
-	/*public void doAudit(AuditTrail auditTrail, Object obj, String className, String performAction) {
-		if("doPreAudit".equals(performAction)){
-			doPreAudit(auditTrail,obj,className);
-		}else if("doPostAudit".equals(performAction)){
-			doPostAudit(auditTrail,obj,className);
-		}
-		//this.auditTrail = auditTrail;
-	}*/
-
 	public void doPreAudit(AuditTrail auditTrail, Object obj, String className) {
 		String objectToJsonValue;
 		try {

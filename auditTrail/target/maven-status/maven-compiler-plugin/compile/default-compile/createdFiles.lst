@@ -1,12 +1,8 @@
+com\fishbowl\auditTrail\service\AuditTrailService.class
 com\fishbowl\auditTrail\queue\QueuePublisher.class
 com\fishbowl\auditTrail\queue\impl\QueuePublisherImpl.class
 com\fishbowl\auditTrail\model\AuditEvent.class
-com\fishbowl\auditTrail\service\impl\AuditTrailServiceImpl.class
-com\fishbowl\auditTrail\model\AuditTrail.class
-com\fishbowl\auditTrail\service\AuditTrailService.class
-com\fishbowl\auditTrail\dao\AuditTrailDAO.class
 com\fishbowl\auditTrail\queue\AuditAzureQueuePublisher.class
+com\fishbowl\auditTrail\service\impl\AuditTrailServiceImpl.class
 com\fishbowl\auditTrail\constant\AuditConstant.class
-com\fishbowl\auditTrail\AudiTrailApplication.class
-com\fishbowl\auditTrail\dao\impl\AuditTrailDAOImpl.class
-com\fishbowl\auditTrail\util\AuditConfiguration.class
+com\fishbowl\auditTrail\model\AuditTrail.class

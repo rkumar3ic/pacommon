@@ -29,10 +29,7 @@
 		</repository>
 	</repositories>
 
-
-
 	<dependencies>
-
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -94,11 +91,6 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>com.fishbowl.auditTrail.AuditTrailMain</mainClass>
-						</manifest>
-					</archive>
 				</configuration>
 				<executions>
 					<execution>
