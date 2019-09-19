@@ -1,6 +1,8 @@
 package com.fishbowl.auditTrail.service;
 
-public interface AuditTrailService<T1, T2, T3> {
-	public void doPreAudit(T1 t1, T2 t2, T3 t3);
-	public void doPostAudit(T1 t1, T2 t2, T3 t3);
+public interface AuditTrailService<T1, T2> {
+	public T1 doPreAudit(T2 t2);
+	public T1 doPostAudit(T2 t2);
+	public T1 setAuditDetails(String userId, String ipAddress, String brandId, Object apiUrl, String httpMethod);
+	public T1 getAuditTrailInstance();
 }
