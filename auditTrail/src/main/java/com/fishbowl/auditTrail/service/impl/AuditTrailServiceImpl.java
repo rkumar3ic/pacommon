@@ -1,8 +1,11 @@
 package com.fishbowl.auditTrail.service.impl;
 
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +32,25 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 		logger.info("Inside doPreAudit");
 		String auditDetailsToJson;
 		try {
+			auditDetailsToJson = ObjectToJson(auditDetails);
+			
+			logger.info(auditDetailsToJson);
+			//auditTrail.setPreOperation(integrateClassToJsonValue(className,objectToJsonValue));
+			this.auditTrail.setPreOperation(auditDetailsToJson);
+			//this.auditTrail = auditTrail;
+			logger.info(this.auditTrail.getPreOperation());
+			logger.info(this.auditTrail.toString());
+		} catch (JsonProcessingException e) {
+			logger.error(e.getMessage(),e.fillInStackTrace());
+		}
+		return this.auditTrail;
+	}
+	
+	public AuditTrail doPreAudit(Map<String,Object> auditDetails, HttpServletRequest request) {
+		logger.info("Inside doPreAudit");
+		String auditDetailsToJson;
+		try {
+			auditDetails = getRequestQueryParameters(request);
 			auditDetailsToJson = ObjectToJson(auditDetails);
 			
 			logger.info(auditDetailsToJson);
@@ -73,6 +95,26 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 			logger.error(e.getMessage(), e.fillInStackTrace());
 		}
 		return this.auditTrail;
+	}
+	
+	public Map<String,Object> getRequestQueryParameters(HttpServletRequest request){
+		Map<String,Object> auditDetails = null;
+		try {
+			if(request != null){
+				auditDetails = new HashMap<String, Object>();
+				if(request != null){
+					Enumeration requestParameters = request.getParameterNames();
+					while (requestParameters.hasMoreElements()) {
+						String element = (String) requestParameters.nextElement();
+						String value = request.getParameter(element);
+						auditDetails.put(element, value);
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e.fillInStackTrace());
+		}
+		return auditDetails;
 	}
 	
 	public String ObjectToJson(Object model) throws JsonProcessingException{
