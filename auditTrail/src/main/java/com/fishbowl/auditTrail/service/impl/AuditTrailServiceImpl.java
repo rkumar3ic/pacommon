@@ -63,11 +63,15 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 	
 	public AuditTrail setAuditDetails(String userId, String ipAddress, String brandId, Object apiUrl, String httpMethod){
 		logger.info("Inside setAuditDetails");
-		this.auditTrail.setUserId(Integer.parseInt(userId));
-		this.auditTrail.setIpAddress(ipAddress);
-		this.auditTrail.setBrandId(Integer.parseInt(brandId));
-		this.auditTrail.setApiUrl((String)apiUrl);
-		this.auditTrail.setHttpMethod(httpMethod);
+		try {
+			this.auditTrail.setUserId(Integer.parseInt(userId));
+			this.auditTrail.setIpAddress(ipAddress);
+			this.auditTrail.setBrandId(Integer.parseInt(brandId));
+			this.auditTrail.setApiUrl((String)apiUrl);
+			this.auditTrail.setHttpMethod(httpMethod);
+		} catch (NumberFormatException e) {
+			logger.error(e.getMessage(), e.fillInStackTrace());
+		}
 		return this.auditTrail;
 	}
 	
