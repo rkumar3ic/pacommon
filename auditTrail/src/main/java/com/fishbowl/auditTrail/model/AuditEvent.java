@@ -1,6 +1,11 @@
 package com.fishbowl.auditTrail.model;
 
-public class AuditEvent {
+import java.io.Serializable;
+
+public class AuditEvent implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	private String action;
 	private int brandId;
 	private AuditTrail auditTrail;
 	
@@ -10,7 +15,13 @@ public class AuditEvent {
 		this.brandId = brandId;
 		this.auditTrail = auditTrail;
 	}
-	
+
+	public AuditEvent(String action, int brandId, AuditTrail auditTrail) {
+		this.action = action;
+		this.brandId = brandId;
+		this.auditTrail = auditTrail;
+	}
+
 	public int getBrandId() {
 		return brandId;
 	}
@@ -22,6 +33,18 @@ public class AuditEvent {
 	}
 	public void setAuditTrail(AuditTrail auditTrail) {
 		this.auditTrail = auditTrail;
+	}
+	public String getAction() {
+		return action;
+	}
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	@Override
+	public String toString() {
+		return "AuditEvent [action=" + action + ", brandId=" + brandId
+				+ ", auditTrail=" + auditTrail + "]";
 	}
 
 }

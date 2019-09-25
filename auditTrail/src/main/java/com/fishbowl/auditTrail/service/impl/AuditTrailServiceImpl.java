@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fishbowl.auditTrail.constant.AuditConstant;
 import com.fishbowl.auditTrail.model.AuditEvent;
 import com.fishbowl.auditTrail.model.AuditTrail;
 import com.fishbowl.auditTrail.queue.AuditAzureQueuePublisher;
@@ -23,10 +24,10 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 	
 	private AuditTrail auditTrail;
 	
-	 @PostConstruct
-	  public void init(){
-	     this.auditTrail = new AuditTrail();
-	  }
+	@PostConstruct
+	public void init(){
+	   this.auditTrail = new AuditTrail();
+	}
 
 	public AuditTrail doPreAudit(Map<String,Object> auditDetails) {
 		logger.info("Inside doPreAudit");
@@ -75,7 +76,8 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 			//this.auditTrail = auditTrail;
 			logger.info(this.auditTrail.getPostOperation());
 			logger.info(this.auditTrail.toString());
-			AuditEvent auditEvent = new AuditEvent(auditTrail.getBrandId(),auditTrail);
+			AuditEvent auditEvent = new AuditEvent(AuditConstant.AUDIT_EVENT,auditTrail.getBrandId(),auditTrail);
+			logger.info("auditEvent : "+auditEvent);
 			new AuditAzureQueuePublisher().sendEventToQueue(auditEvent);
 		} catch (JsonProcessingException e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
