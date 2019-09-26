@@ -1,5 +1,6 @@
 package com.fishbowl.auditTrail.service.impl;
 
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +19,7 @@ import com.fishbowl.auditTrail.queue.AuditAzureQueuePublisher;
 import com.fishbowl.auditTrail.service.AuditTrailService;
 import com.google.gson.Gson;
 
-public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<String,Object>> {
+public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Object> {
 	
 	private static Logger logger = LoggerFactory.getLogger(AuditTrailServiceImpl.class);
 	
@@ -29,16 +30,15 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 	   this.auditTrail = new AuditTrail();
 	}
 
-	public AuditTrail doPreAudit(Map<String,Object> auditDetails) {
+	public AuditTrail doPreAudit(String userId, String remoteAddr,String tenantId, Object attribute, String method, String className, Object classObject) {
 		logger.info("Inside doPreAudit");
 		String auditDetailsToJson;
 		try {
-			auditDetailsToJson = ObjectToJson(auditDetails);
-			
+			this.auditTrail.setApiCallStart(new Date());
+			setAuditDetails(userId,remoteAddr,tenantId,attribute,method);
+			auditDetailsToJson = setClassObjectDetailsToJson(className,classObject);
 			logger.info(auditDetailsToJson);
-			//auditTrail.setPreOperation(integrateClassToJsonValue(className,objectToJsonValue));
 			this.auditTrail.setPreOperation(auditDetailsToJson);
-			//this.auditTrail = auditTrail;
 			logger.info(this.auditTrail.getPreOperation());
 			logger.info(this.auditTrail.toString());
 		} catch (JsonProcessingException e) {
@@ -47,10 +47,29 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 		return this.auditTrail;
 	}
 	
-	public AuditTrail doPreAudit(Map<String,Object> auditDetails, HttpServletRequest request) {
+	@Override
+	public AuditTrail doPreAudit(String userId, String remoteAddr, String tenantId, Object attribute, String method, HttpServletRequest request) {
 		logger.info("Inside doPreAudit");
 		String auditDetailsToJson;
 		try {
+			this.auditTrail.setApiCallStart(new Date());
+			setAuditDetails(userId,remoteAddr,tenantId,attribute,method);
+			auditDetailsToJson = ObjectToJson(getRequestQueryParameters(request));
+			logger.info(auditDetailsToJson);
+			this.auditTrail.setPreOperation(auditDetailsToJson);
+			logger.info(this.auditTrail.getPreOperation());
+			logger.info(this.auditTrail.toString());
+		} catch (JsonProcessingException e) {
+			logger.error(e.getMessage(),e.fillInStackTrace());
+		}
+		return this.auditTrail;
+	}
+	
+	/*public AuditTrail doPreAudit(Map<String,Object> auditDetails, HttpServletRequest request) {
+		logger.info("Inside doPreAudit");
+		String auditDetailsToJson;
+		try {
+			this.auditTrail.setApiCallStart(new Date());
 			auditDetails = getRequestQueryParameters(request);
 			auditDetailsToJson = ObjectToJson(auditDetails);
 			
@@ -64,16 +83,16 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 		return this.auditTrail;
-	}
+	}*/
 
-	public AuditTrail doPostAudit(Map<String,Object> auditDetails) {
+	public AuditTrail doPostAudit(String className, Object classObject) {
 		logger.info("Inside doPostAudit");
 		String auditDetailsToJson;
 		try {
-			auditDetailsToJson = ObjectToJson(auditDetails);
+			this.auditTrail.setApiCallEnd(new Date());
+			auditDetailsToJson = setClassObjectDetailsToJson(className,classObject);
 			logger.info(auditDetailsToJson);
 			this.auditTrail.setPostOperation(concatenateObjectToJsonValues(auditTrail.getPreOperation(),auditDetailsToJson,"|"));
-			//this.auditTrail = auditTrail;
 			logger.info(this.auditTrail.getPostOperation());
 			logger.info(this.auditTrail.toString());
 			AuditEvent auditEvent = new AuditEvent(AuditConstant.AUDIT_EVENT,auditTrail.getBrandId(),auditTrail);
@@ -83,6 +102,12 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 		return this.auditTrail;
+	}
+	
+	public String setClassObjectDetailsToJson(String className, Object classObject) throws JsonProcessingException{
+		Map<String,Object> auditDetails = new HashMap<String, Object>();
+		auditDetails.put(className, classObject);
+		return ObjectToJson(auditDetails);
 	}
 	
 	public AuditTrail setAuditDetails(String userId, String ipAddress, String brandId, Object apiUrl, String httpMethod){
@@ -127,10 +152,6 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Map<
 	public String concatenateObjectToJsonValues(String v1, String v2, String delimiter) throws JsonProcessingException{
 		return v1 + " " +delimiter+ " "+v2 ;
 	}
-	
-	/*public String integrateClassToJsonValue(String className, String objectToJsonValue) throws JsonProcessingException{
-		return className+" ["+objectToJsonValue+"]";
-	}*/
 	
 	@Override
 	public AuditTrail getAuditTrailInstance() {
