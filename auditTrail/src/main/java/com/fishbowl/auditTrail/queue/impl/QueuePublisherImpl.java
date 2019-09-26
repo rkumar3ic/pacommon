@@ -2,15 +2,10 @@ package com.fishbowl.auditTrail.queue.impl;
 
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import com.fishbowl.auditTrail.constant.AuditConstant;
-import com.fishbowl.auditTrail.model.AuditEvent;
 import com.fishbowl.auditTrail.queue.QueuePublisher;
 import com.microsoft.azure.storage.CloudStorageAccount;
-import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.queue.CloudQueue;
 import com.microsoft.azure.storage.queue.CloudQueueClient;
 import com.microsoft.azure.storage.queue.CloudQueueMessage;
@@ -67,7 +62,7 @@ public class QueuePublisherImpl implements QueuePublisher {
 	@Override
 	public void sendEventToQueue(String message) {
 		try {
-			logger.info("sending azure queue message : " +queueUrl+ "  message  "+message);
+			logger.debug("sending azure queue message : " +queueUrl+ "  message  "+message);
 			queue.addMessage(new CloudQueueMessage(message));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e.fillInStackTrace());
