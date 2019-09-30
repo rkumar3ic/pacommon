@@ -32,8 +32,7 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 		logger.debug("Inside doPreAudit");
 		String auditDetailsToJson;
 		try {
-			this.auditTrail.setApiCallStart(new Date());
-			setAuditDetails(userId,remoteAddr,tenantId,attribute,method);
+			setAuditDetails(new Date(), userId,remoteAddr,tenantId,attribute,method);
 			auditDetailsToJson = setClassObjectDetailsToJson(className,classObject);
 			logger.debug(auditDetailsToJson);
 			this.auditTrail.setPreOperation(auditDetailsToJson);
@@ -50,8 +49,7 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 		logger.debug("Inside doPreAudit");
 		String auditDetailsToJson;
 		try {
-			this.auditTrail.setApiCallStart(new Date());
-			setAuditDetails(userId,remoteAddr,tenantId,attribute,method);
+			setAuditDetails(new Date(),userId,remoteAddr,tenantId,attribute,method);
 			
 			auditDetailsToJson = ObjectToJson(getRequestQueryParameters(requestParams));
 			
@@ -90,9 +88,10 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 		return ObjectToJson(auditDetails);
 	}
 	
-	public AuditTrail setAuditDetails(String userId, String ipAddress, String brandId, Object apiUrl, String httpMethod){
+	public AuditTrail setAuditDetails(Date apiStartDate, String userId, String ipAddress, String brandId, Object apiUrl, String httpMethod){
 		logger.debug("Inside setAuditDetails");
 		try {
+			this.auditTrail.setApiCallStart(apiStartDate);
 			this.auditTrail.setUserId(Integer.parseInt(userId));
 			this.auditTrail.setIpAddress(ipAddress);
 			this.auditTrail.setBrandId(Integer.parseInt(brandId));
