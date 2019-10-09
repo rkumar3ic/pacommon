@@ -1,11 +1,13 @@
 package com.fishbowl.auditTrail.service.impl;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,36 +30,32 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 	   this.auditTrail = new AuditTrail();
 	}
 
-	public AuditTrail doPreAudit(String userId, String remoteAddr,String tenantId, Object attribute, String method, String className, Object classObject) {
+	public AuditTrail doPreAudit(String userId, String remoteAddr,String tenantId, Object attribute, String method, String className, Object classObject, String userAgent, String serverIp) {
 		logger.debug("Inside doPreAudit");
 		String auditDetailsToJson;
 		try {
-			setAuditDetails(new Date(), userId,remoteAddr,tenantId,attribute,method);
+			setAuditDetails(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")), userId,remoteAddr,tenantId,attribute,method,userAgent,serverIp);
 			auditDetailsToJson = setClassObjectDetailsToJson(className,classObject);
-			logger.debug(auditDetailsToJson);
 			this.auditTrail.setPreOperation(auditDetailsToJson);
-			logger.debug(this.auditTrail.getPreOperation());
 			logger.debug(this.auditTrail.toString());
-		} catch (JsonProcessingException e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 		return this.auditTrail;
 	}
 	
 	@Override
-	public AuditTrail doPreAudit(String userId, String remoteAddr, String tenantId, Object attribute, String method, Map<String, String[]> requestParams) {
+	public AuditTrail doPreAudit(String userId, String remoteAddr, String tenantId, Object attribute, String method, Map<String, String[]> requestParams, String userAgent, String serverIp) {
 		logger.debug("Inside doPreAudit");
 		String auditDetailsToJson;
 		try {
-			setAuditDetails(new Date(),userId,remoteAddr,tenantId,attribute,method);
+			setAuditDetails(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")),userId,remoteAddr,tenantId,attribute,method,userAgent,serverIp);
 			
 			auditDetailsToJson = ObjectToJson(getRequestQueryParameters(requestParams));
 			
-			logger.debug(auditDetailsToJson);
 			this.auditTrail.setPreOperation(auditDetailsToJson);
-			logger.debug(this.auditTrail.getPreOperation());
-			logger.debug(this.auditTrail.toString());
-		} catch (JsonProcessingException e) {
+			//logger.debug(this.auditTrail.toString());
+		} catch (Exception e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
 		return this.auditTrail;
@@ -67,12 +65,9 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 		logger.debug("Inside doPostAudit");
 		String auditDetailsToJson;
 		try {
-			this.auditTrail.setApiCallEnd(new Date());
+			this.auditTrail.setApiCallEnd(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")));
 			auditDetailsToJson = setClassObjectDetailsToJson(className,classObject);
-			logger.debug(auditDetailsToJson);
 			this.auditTrail.setPostOperation(concatenateObjectToJsonValues(auditTrail.getPreOperation(),auditDetailsToJson,"|"));
-			logger.debug(this.auditTrail.getPostOperation());
-			logger.debug(this.auditTrail.toString());
 			AuditEvent auditEvent = new AuditEvent(AuditConstant.AUDIT_EVENT,auditTrail.getBrandId(),auditTrail);
 			logger.debug("auditEvent : "+auditEvent);
 			new AuditAzureQueuePublisher().sendEventToQueue(auditEvent);
@@ -88,7 +83,7 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 		return ObjectToJson(auditDetails);
 	}
 	
-	public AuditTrail setAuditDetails(Date apiStartDate, String userId, String ipAddress, String brandId, Object apiUrl, String httpMethod){
+	public AuditTrail setAuditDetails(String apiStartDate, String userId, String ipAddress, String brandId, Object apiUrl, String httpMethod, String userAgent, String serverIp){
 		logger.debug("Inside setAuditDetails");
 		try {
 			this.auditTrail.setApiCallStart(apiStartDate);
@@ -97,6 +92,8 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 			this.auditTrail.setBrandId(Integer.parseInt(brandId));
 			this.auditTrail.setApiUrl((String)apiUrl);
 			this.auditTrail.setHttpMethod(httpMethod);
+			this.auditTrail.setUserAgent(userAgent);
+			this.auditTrail.setServerIpAddress(serverIp);
 		} catch (NumberFormatException e) {
 			logger.error(e.getMessage(), e.fillInStackTrace());
 		}

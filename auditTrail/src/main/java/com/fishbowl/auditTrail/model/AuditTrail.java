@@ -10,10 +10,12 @@ public class AuditTrail {
 	private int brandId;
 	private String apiUrl;
 	private String httpMethod;
+	private String userAgent;
+	private String serverIpAddress;
 	private String preOperation;
 	private String postOperation;
-	private Date apiCallStart;
-	private Date apiCallEnd;
+	private String apiCallStart;
+	private String apiCallEnd;
 	private Date operationDbCall;
 	
 	public long getAuditId() {
@@ -64,16 +66,16 @@ public class AuditTrail {
 	public void setPostOperation(String postOperation) {
 		this.postOperation = postOperation;
 	}
-	public Date getApiCallStart() {
+	public String getApiCallStart() {
 		return apiCallStart;
 	}
-	public void setApiCallStart(Date apiCallStart) {
+	public void setApiCallStart(String apiCallStart) {
 		this.apiCallStart = apiCallStart;
 	}
-	public Date getApiCallEnd() {
+	public String getApiCallEnd() {
 		return apiCallEnd;
 	}
-	public void setApiCallEnd(Date apiCallEnd) {
+	public void setApiCallEnd(String apiCallEnd) {
 		this.apiCallEnd = apiCallEnd;
 	}
 	public Date getOperationDbCall() {
@@ -82,16 +84,29 @@ public class AuditTrail {
 	public void setOperationDbCall(Date operationDbCall) {
 		this.operationDbCall = operationDbCall;
 	}
+	public String getUserAgent() {
+		return userAgent;
+	}
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+	public String getServerIpAddress() {
+		return serverIpAddress;
+	}
+	public void setServerIpAddress(String serverIpAddress) {
+		this.serverIpAddress = serverIpAddress;
+	}
 	
 	@Override
 	public String toString() {
 		return "AuditTrail [auditId=" + auditId + ", userId=" + userId
 				+ ", ipAddress=" + ipAddress + ", brandId=" + brandId
 				+ ", apiUrl=" + apiUrl + ", httpMethod=" + httpMethod
-				+ ", preOperation=" + preOperation + ", postOperation="
-				+ postOperation + ", apiCallStart=" + apiCallStart
-				+ ", apiCallEnd=" + apiCallEnd + ", operationDbCall="
-				+ operationDbCall + "]";
+				+ ", userAgent=" + userAgent + ", serverIpAddress="
+				+ serverIpAddress + ", preOperation=" + preOperation
+				+ ", postOperation=" + postOperation + ", apiCallStart="
+				+ apiCallStart + ", apiCallEnd=" + apiCallEnd
+				+ ", operationDbCall=" + operationDbCall + "]";
 	}
 	
 }
