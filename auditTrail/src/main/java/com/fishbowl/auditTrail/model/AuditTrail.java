@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class AuditTrail {
 	
-	private long auditId;
+	private String auditId;
 	private int userId;
 	private String ipAddress;
 	private int brandId;
@@ -18,10 +18,10 @@ public class AuditTrail {
 	private String apiCallEnd;
 	private Date operationDbCall;
 	
-	public long getAuditId() {
+	public String getAuditId() {
 		return auditId;
 	}
-	public void setAuditId(long auditId) {
+	public void setAuditId(String auditId) {
 		this.auditId = auditId;
 	}
 	public int getUserId() {

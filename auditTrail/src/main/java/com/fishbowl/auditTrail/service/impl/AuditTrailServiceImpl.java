@@ -105,6 +105,7 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 	public AuditTrail setAuditDetails(String apiStartDate, String userId, String ipAddress, String brandId, Object apiUrl, String httpMethod, String userAgent, String serverIp){
 		logger.debug("Inside setAuditDetails");
 		try {
+			this.auditTrail.setAuditId(this.correlationId);
 			this.auditTrail.setApiCallStart(apiStartDate);
 			this.auditTrail.setUserId(Integer.parseInt(userId));
 			this.auditTrail.setIpAddress(ipAddress);
