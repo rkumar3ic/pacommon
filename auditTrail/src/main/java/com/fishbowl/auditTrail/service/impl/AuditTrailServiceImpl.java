@@ -1,15 +1,25 @@
 package com.fishbowl.auditTrail.service.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+
+
+import org.apache.log4j.MDC;
+import org.apache.log4j.PropertyConfigurator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fishbowl.auditTrail.constant.AuditConstant;
@@ -21,16 +31,22 @@ import com.google.gson.Gson;
 
 public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Object> {
 	
-	private static Logger logger = LoggerFactory.getLogger(AuditTrailServiceImpl.class);
+	private static Logger logger = Logger.getLogger(AuditTrailServiceImpl.class);
+	
+    private static final String CORRELATION_ID_LOG_VAR_NAME = "correlationId";
+ 
 	
 	private AuditTrail auditTrail;
+	private String correlationId;
 	
 	@PostConstruct
 	public void init(){
-	   this.auditTrail = new AuditTrail();
+		configureLogging(AuditConstant.CONFIGURE_LOGGING);
+		this.auditTrail = new AuditTrail();
 	}
 
 	public AuditTrail doPreAudit(String userId, String remoteAddr,String tenantId, Object attribute, String method, String className, Object classObject, String userAgent, String serverIp) {
+		configureCorrelationId();
 		logger.debug("Inside doPreAudit");
 		String auditDetailsToJson;
 		try {
@@ -46,6 +62,7 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 	
 	@Override
 	public AuditTrail doPreAudit(String userId, String remoteAddr, String tenantId, Object attribute, String method, Map<String, String[]> requestParams, String userAgent, String serverIp) {
+		configureCorrelationId();
 		logger.debug("Inside doPreAudit");
 		String auditDetailsToJson;
 		try {
@@ -71,6 +88,8 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 			AuditEvent auditEvent = new AuditEvent(AuditConstant.AUDIT_EVENT,auditTrail.getBrandId(),auditTrail);
 			logger.debug("auditEvent : "+auditEvent);
 			new AuditAzureQueuePublisher().sendEventToQueue(auditEvent);
+			cleanupCorrelationId();
+			
 		} catch (JsonProcessingException e) {
 			logger.error(e.getMessage(),e.fillInStackTrace());
 		}
@@ -131,6 +150,37 @@ public class AuditTrailServiceImpl implements AuditTrailService<AuditTrail, Obje
 	public AuditTrail getAuditTrailInstance() {
 		return this.auditTrail;
 	}
+	
+	private void configureLogging(String logPropFile){
+		try(InputStream logStream = new FileInputStream(new File(System.getProperty("user.dir")+logPropFile));){
+			Properties prop = new Properties();
+			if (logStream.available() > 0) {
+				prop.load(logStream);
+				PropertyConfigurator.configure(prop);
+			}
+		} catch (FileNotFoundException e) {
+			logger.error(e.getMessage(), e.fillInStackTrace());
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e.fillInStackTrace());
+		}
+	}
+	
+	private void configureCorrelationId(){
+		correlationId = (String) MDC.get(CORRELATION_ID_LOG_VAR_NAME);
+		if (correlationId == null) {
+			correlationId = UUID.randomUUID().toString();
+			logger.debug("No correlationId found. Generated : " + correlationId);
+		} else {
+			logger.debug("Found correlationId : " + correlationId);
+		}
+		MDC.put(CORRELATION_ID_LOG_VAR_NAME, correlationId);
+	}
+	
+	private void cleanupCorrelationId(){
+		logger.debug("Removing correlationId : " + correlationId);
+		MDC.remove(CORRELATION_ID_LOG_VAR_NAME);
+	}
+	
 	
 	public AuditTrail getAuditTrail() {
 		return auditTrail;

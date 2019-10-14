@@ -11,7 +11,9 @@ import com.microsoft.azure.storage.queue.CloudQueueClient;
 import com.microsoft.azure.storage.queue.CloudQueueMessage;
 
 public class QueuePublisherImpl implements QueuePublisher {
+	
 	private static Logger logger = Logger.getLogger(QueuePublisherImpl.class);
+	
 	public CloudStorageAccount azureStorageAccount = null;
 	public CloudQueueClient queueClient = null;
 	public CloudQueue queue=null;
